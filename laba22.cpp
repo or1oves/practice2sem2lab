@@ -26,12 +26,23 @@ void menu2() {
             "7) IDZ\n";
 }
 
+
+
 void clearStream() {
     cin.clear();
     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     cin.sync();
 }
 
+int inputInt(){
+    int number;
+    while(!(cin >> number)) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "wrong input! \n";
+    }
+    return number;
+}
 
 int inputRandomInt(){
     return rand()%100;
@@ -83,7 +94,7 @@ struct List {
             return;
         Node *temp = head->next;
         if(temp != nullptr){
-            temp->next = nullptr;
+            temp->prev = nullptr;
         }
         else{
             tail = nullptr;
@@ -166,7 +177,10 @@ struct List {
             cout << "there is no such element";
             return;
         }
-        while(temp != nullptr && temp->data != value){ //проходимся по элементам
+        while(temp){ //проходимся по элементам
+            if(temp->data == value){
+                break;
+            }
             temp = temp->next;
         }
         if(temp->prev == nullptr){
@@ -177,10 +191,12 @@ struct List {
             moveTail(); //если нужно удалить последний элемент
             return;
         }
-        Node *prevDel = temp->prev;
-        Node *Del = temp->next;
-        prevDel->next = Del; //если удаляем не head
-        Del->prev = prevDel; //если удаляем не tail
+        else {
+            Node *prevDel = temp->prev;
+            Node *Del = temp->next;
+            prevDel->next = Del; //если удаляем не head
+            Del->prev = prevDel; //если удаляем не tail
+        }
         delete temp;
     }
 
@@ -198,10 +214,12 @@ struct List {
             moveTail(); //если нужно удалить последний элемент
             return;
         }
-        Node *prevDel = temp->prev;
-        Node *Del = temp->next;
-        prevDel->next = Del; //если удаляем не head
-        Del->prev = prevDel; //если удаляем не tail
+        else {
+            Node *prevDel = temp->prev;
+            Node *Del = temp->next;
+            prevDel->next = Del; //если удаляем не head
+            Del->prev = prevDel; //если удаляем не tail}
+        }
         delete temp;
     }
 
@@ -216,6 +234,9 @@ struct List {
         int number;
         while(cin >> number){
             addTail(number);
+            if(cin.peek() == '\n'){
+                break;
+            }
         }
         clearStream();
     }
@@ -383,6 +404,7 @@ void inputArray(int &SIZE, int* &arr, int &value){
     clearStream();
 }
 
+
 void deleteByIndexArray(int &SIZE, int* &arr, int &id){
     int *ind = new int[SIZE - 1];
     int a = 0;
@@ -424,7 +446,7 @@ void deleteByValueArray(int &SIZE, int* &arr, int &value){
 void getValueArray(int &SIZE, int* &arr, int &value){
     for(int i = 0; i < SIZE; i++){
         if(*(arr + i) == value){
-            cout << i << '\n';
+            cout << "index: " << i << '\n';
             return;
         }
     }
@@ -548,7 +570,7 @@ int main(){
                         cout << "enter value: ";
                         cin >> value;
                         start = steady_clock::now();
-                        list.deleteByValue(id);
+                        list.deleteByValue(value);
                         end = steady_clock::now();
                         result = duration_cast<nanoseconds>(end - start);
                         listTime.deleteByValueTime = result.count();
